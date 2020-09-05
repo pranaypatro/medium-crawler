@@ -14,3 +14,5 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::post('/parse', 'ParseController@parseMediumOverview')->name('overview.parse');
