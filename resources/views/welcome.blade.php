@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>Laravel</title>
 
         <!-- Fonts -->
@@ -80,21 +80,72 @@
             @endif
 
             <div class="content">
-                <div class="title m-b-md">
-                    Laravel
+                <div class="content">
+                    <form id="submit_request" method="post" action="#">
+                        <label>Enter Keyword</label>
+                        <input type="text" id="keyword" name="keyword">
+                        <button type="submit">Search</button>
+                    </form>
+
+                    <div id="blogs-overview">
+{{--                        @for ($i = 0; $i < sizeof($data['title']); $i++)--}}
+{{--                            <h1>Title = {{ $data['title'][$i] }}</h1>--}}
+{{--                        @endfor--}}
+
+
+                    </div>
                 </div>
 
-                <div class="links">
-                    <a href="https://laravel.com/docs">Docs</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://blog.laravel.com">Blog</a>
-                    <a href="https://nova.laravel.com">Nova</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://vapor.laravel.com">Vapor</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
             </div>
         </div>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+        <script>
+            //-----------------
+            $(document).ready(function(){
+                $('#submit_request').click(function(e){
+                    e.preventDefault();
+                    /*Ajax Request Header setup*/
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    $('#send_form').html('Sending..');
+
+                    /* Submit form data using ajax*/
+                    $.ajax({
+                        url: "{{ route('overview.parse') }}",
+                        method: 'post',
+                        data: $('#submit_request').serialize(),
+                        success: function(response){
+
+                            var jsonData = JSON.parse(response);
+
+                            var element = document.getElementById("blogs-overview");
+                            element.innerHTML = "";
+                            var i=0;
+                            for (i = 0; i < (jsonData.title).length; i++) {
+                                // console.log(jsonData.title[i] + " - " +  jsonData.url[i]);
+                                element.innerHTML += `<a href="${jsonData.url[i]}">${jsonData.title[i]}</a><label> - Parsing</label><br/>`;
+                            }
+                            
+                            //------------------------
+                            // $('#send_form').html('Submit');
+                            // $('#res_message').show();
+                            // $('#res_message').html(response.msg);
+                            // $('#msg_div').removeClass('d-none');
+                            // document.getElementById("contact_us").reset();
+                            setTimeout(function(){
+                                $('#res_message').hide();
+                                $('#msg_div').hide();
+                            },10000);
+                            //--------------------------
+                        }});
+                });
+            });
+            //-----------------
+        </script>
     </body>
 </html>
