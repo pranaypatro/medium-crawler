@@ -1,0 +1,4 @@
+1. Create a crawler first.
+2. Extract The required Data.
+3. Add all the parsed Blogs into Database
+4.
