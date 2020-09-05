@@ -32,8 +32,8 @@ class ParseController extends Controller
         $url = "https://medium.com/hackernoon/choosing-the-right-platform-for-chatbot-development-ux-ui-perspective-ee44694e37a2";
 
         $fetchedData = $this->mediumCrawler->fetchBlogDetailFromLink($url);
-//        dd($fetchedData);
-        return view('blog-detail')->with('data', $fetchedData);
+        return response()->json(($fetchedData));
+//        return view('blog-detail')->with('data', $fetchedData);
     }
 
 
