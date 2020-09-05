@@ -14,12 +14,33 @@ class MediumCrawler extends Crawler implements Crawlable {
 
     public function __construct() {}
 
+    /**
+     * This function will be the Single Point which will call other stub methods for fetching parameters by using Regex.
+     * It will work on the Blog Overview Page. (Fetch all Titles and links from the overview page)
+     * @param $tag
+     * @param int $count
+     * @return array
+     */
     public function fetchBlogsFromTagOverview($tag, int $count = 10) {
-        $this->data = $this->parseUrl(sprintf(self::LOAD_MORE_URL, $tag, $count));
+        $this->data = $this->parseJsonUrl(sprintf(self::LOAD_MORE_URL, $tag, $count));
         return $this->fetchTitleAndLinkFromOverview();
     }
 
-    public function fetchTitleAndLinkFromOverview() {
+    public function fetchBlogDetailFromLink($url) {
+        $this->data = $this->parseJsonUrl($url);
+        return [
+            "title" => $this->fetchTitle(),
+            "creator" => $this->fetchCreator(),
+//            "detail" => $this->fetchDetail(),
+            "tags" => implode(', ', $this->fetchTags())
+        ];
+    }
+
+    /**
+     * Extracts The Title and Link from the crawled Data of Overview Page.
+     * @return array
+     */
+    private function fetchTitleAndLinkFromOverview() {
         preg_match_all('|{"id":".*","versionId":".*","creatorId":".*","homeCollectionId":".*","title":"(.*)","detectedLanguage":".*","latestVersion":".*","latestPublishedVersion":".*","hasUnpublishedEdits.*"uniqueSlug":"(.*),"|U',
             $this->data,
             $out, PREG_PATTERN_ORDER);
@@ -31,6 +52,61 @@ class MediumCrawler extends Crawler implements Crawlable {
             "url" => $prefixed_array
         ];
         return $returnArray;
+    }
+
+    private function fetchTitle() {
+//        preg_match('|class="fo fp fq fr b fs ft fu fv fw fx fy fz ga gb gc gd ge gf gg gh ec">(.*)</h1>|U',
+//            $this->data,
+//            $out
+//        );
+
+        preg_match('|{"success":[a-zA-Z]*,"payload":{"value":{"id":".*","versionId":".*","creatorId":".*","homeCollectionId":"[a-zA-Z0-9]*","title":"(.*)","detectedLanguage":"en"|U',
+            $this->data,
+            $out
+        );
+        return ($out[1]);
+    }
+
+    private function fetchTags() {
+//        preg_match_all('|<a href="(.*)" class="ce cf cg kk hv sw sx hu r sy">(.*)</a>|U',
+//            $this->data,
+//            $out
+//        );
+
+        preg_match_all('|{"slug":"[A-Za-z0-9]*","name":"([A-Za-z0-9]*)","postCount":[0-9]*,"metadata":{"postCount":[0-9]*,"coverImage":.*},"type":"Tag"}|mU',
+            $this->data,
+            $out
+        );
+        return ($out[1]);
+    }
+
+    private function fetchCreator() {
+//        preg_match('|<a class="cl cm at au av aw ax ay az ba he bd ei ej" rel="noopener" href="(.*)">(.*)</a>|U',
+//            $this->data,
+//            $out
+//        );
+
+        preg_match('|"User":.*"name":"(.*)","username"|U',
+            $this->data,
+            $out
+        );
+        return ($out[1]);
+    }
+
+    private function fetchDetail() {
+        preg_match('|<div><a class="cl cm at au av aw ax ay az ba he bd ei ej" rel="noopener" href="(.*)">(.*)</a> <!-- -->·<!-- --> <!-- -->(.*)<!-- -->(.*)</div>|U',
+            $this->data,
+            $out
+        );
+        return $out[2] . ', ' . $out[3] . $out[4];
+    }
+
+    public function fetchResponses() {
+        preg_match('|class="fo fp fq fr b fs ft fu fv fw fx fy fz ga gb gc gd ge gf gg gh ec">(.*)</h1>|U',
+            $this->data,
+            $out
+        );
+        dump($out);
     }
 
 }

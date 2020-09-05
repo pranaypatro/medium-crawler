@@ -8,10 +8,13 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^7.2",
+        "php": "^7.4",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.18.35",
-        "laravel/tinker": "^2.0"
+        "laravel/tinker": "^2.0",
+      "ext-http": "*",
+        "ext-dom": "*",
+        "ext-curl": "*"
     },
     "require-dev": {
         "facade/ignition": "^1.4",

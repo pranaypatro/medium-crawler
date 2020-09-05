@@ -16,3 +16,4 @@ Route::get('/', function () {
 });
 
 Route::post('/parse', 'ParseController@parseMediumOverview')->name('overview.parse');
+Route::get('/blog', 'ParseController@parseBlog')->name('blog.parse');

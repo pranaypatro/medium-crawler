@@ -65,26 +65,12 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}">Register</a>
-                        @endif
-                    @endauth
-                </div>
-            @endif
-
             <div class="content">
                 <div class="content">
-                    <form method="post" action="#">
+                    <form id="submit_request" method="post" action="#">
                         <label>Enter Keyword</label>
                         <input type="text" id="keyword" name="keyword">
-                        <button id="submit_request" type="submit">Search</button>
+                        <button type="submit">Search</button>
                     </form>
 
                     <div id="blogs-overview">
@@ -97,7 +83,6 @@
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
         <script>
-            //-----------------
             $(document).ready(function(){
                 $('#submit_request').click(function(e){
                     e.preventDefault();
@@ -108,14 +93,12 @@
                         }
                     });
 
-                    $('#send_form').html('Sending..');
-
                     /* Submit form data using ajax*/
                     $.ajax({
                         url: "{{ route('overview.parse') }}",
                         method: 'post',
                         data: $('#submit_request').serialize(),
-                        success: function(response){
+                        success: function(response) {
 
                             var jsonData = JSON.parse(response);
 
@@ -124,12 +107,21 @@
                             var i=0;
                             for (i = 0; i < (jsonData.title).length; i++) {
                                 // console.log(jsonData.title[i] + " - " +  jsonData.url[i]);
-                                element.innerHTML += `<a href="${jsonData.url[i]}">${jsonData.title[i]}</a><label> - Parsing</label><br/>`;
+                                element.innerHTML += `<div class="blog_status"><label>${jsonData.title[i]}</label><input type="hidden" id="${i}" value="${jsonData.url[i]}" name="blog_url"></div>`;
                             }
-                        }});
+                        }
+                    });
+
                 });
+
+                $(document).on("click", ".blog_status" , function() {
+                    var id = $(this).children("label").text();
+                    var value = $(this).children("input").val();
+                    console.log(id);
+                    console.log(value);
+                });
+
             });
-            //-----------------
         </script>
     </body>
 </html>
