@@ -81,17 +81,13 @@
 
             <div class="content">
                 <div class="content">
-                    <form id="submit_request" method="post" action="#">
+                    <form method="post" action="#">
                         <label>Enter Keyword</label>
                         <input type="text" id="keyword" name="keyword">
-                        <button type="submit">Search</button>
+                        <button id="submit_request" type="submit">Search</button>
                     </form>
 
                     <div id="blogs-overview">
-{{--                        @for ($i = 0; $i < sizeof($data['title']); $i++)--}}
-{{--                            <h1>Title = {{ $data['title'][$i] }}</h1>--}}
-{{--                        @endfor--}}
-
 
                     </div>
                 </div>
@@ -130,18 +126,6 @@
                                 // console.log(jsonData.title[i] + " - " +  jsonData.url[i]);
                                 element.innerHTML += `<a href="${jsonData.url[i]}">${jsonData.title[i]}</a><label> - Parsing</label><br/>`;
                             }
-                            
-                            //------------------------
-                            // $('#send_form').html('Submit');
-                            // $('#res_message').show();
-                            // $('#res_message').html(response.msg);
-                            // $('#msg_div').removeClass('d-none');
-                            // document.getElementById("contact_us").reset();
-                            setTimeout(function(){
-                                $('#res_message').hide();
-                                $('#msg_div').hide();
-                            },10000);
-                            //--------------------------
                         }});
                 });
             });
