@@ -78,10 +78,27 @@
                     @endauth
                 </div>
             @endif
+            <div class="links">
 
-
+                <div class="element">
+                    <label>Data fetched from:- </label>
+                    <label>{{ $data['fetched_from'] }}</label>
+                </div>
+                <div class="element">
+                    <label>Title:- </label>
+                    <label>{{ $data['title'] }}</label>
+                </div>
+                <div class="element">
+                    <label>Creator:- </label>
+                    <label>{{ $data['creator'] }}</label>
+                </div>
+{{--                <div class="element">--}}
+{{--                    <label>Tags:- </label>--}}
+{{--                    @foreach ($data['tags'] as $tag)--}}
+{{--                        <a href="{{ route('home') }}">{{ $tag }}</a>--}}
+{{--                    @endforeach--}}
+{{--                </div>--}}
+            </div>
         </div>
-
-
     </body>
 </html>
