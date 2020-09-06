@@ -7,3 +7,5 @@
 5. Got to learn about "Runaway Regular Expressions: Catastrophic Backtracking"
 6. Was stuck in an error while parsing the tags it was selecting whole. i forgot about the Ungreedy option.
 7. The DOM load problem for dynamic DOM element when accessed by Jquery.
+8. Discovered human.txt on medium.com
+9. Discovered Jobs Portal on the the console of medium.com
