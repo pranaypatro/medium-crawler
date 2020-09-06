@@ -92,13 +92,66 @@
                     <label>Creator:- </label>
                     <label>{{ $data['creator'] }}</label>
                 </div>
-{{--                <div class="element">--}}
-{{--                    <label>Tags:- </label>--}}
-{{--                    @foreach ($data['tags'] as $tag)--}}
-{{--                        <a href="{{ route('home') }}">{{ $tag }}</a>--}}
-{{--                    @endforeach--}}
-{{--                </div>--}}
+                <div class="element">
+                    <label>Tags:- </label>
+                    @foreach ($data['tags'] as $tag)
+                        <a class="tag-element" href="">{{ $tag }}</a>
+                    @endforeach
+                </div>
             </div>
         </div>
+
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+        <script>
+            $(document).ready(function() {
+
+                $('.tag-element').click(function(e) {
+                    e.preventDefault();
+                    var text = $(this).text();
+                    localStorage.setItem('hitter', text.trim());
+                    alert(text.trim());
+                    window.location.href = "{{ route('home') }}";
+                });
+
+                $('#submit_request').click(function(e) {
+                    e.preventDefault();
+                    /*Ajax Request Header setup*/
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    /* Submit form data using ajax*/
+                    $.ajax({
+                        url: "{{ route('home') }}",
+                        method: 'get',
+                        data: $('#submit_request').serialize(),
+                        success: function(response) {
+
+                            var jsonData = JSON.parse(response);
+
+                            var element = document.getElementById("blogs-overview");
+                            element.innerHTML = "";
+                            var i=0;
+                            for (i = 0; i < (jsonData.title).length; i++) {
+                                // console.log(jsonData.title[i] + " - " +  jsonData.url[i]);
+                                element.innerHTML += `<div class="blog_status"><label>${jsonData.title[i]}</label><input type="hidden" id="${i}" value="${jsonData.url[i]}" name="blog_url"></div>`;
+                            }
+                        }
+                    });
+
+                });
+
+                $(document).on("click", ".blog_status" , function() {
+                    var id = $(this).children("label").text();
+                    var value = $(this).children("input").val();
+                    console.log(id);
+                    console.log(value);
+                });
+
+            });
+        </script>
     </body>
 </html>

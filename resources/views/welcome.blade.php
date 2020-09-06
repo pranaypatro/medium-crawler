@@ -83,9 +83,12 @@
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
         <script>
-            $(document).ready(function(){
-                $('#submit_request').click(function(e){
-                    e.preventDefault();
+            $(document).ready(function() {
+
+                var storageValue = localStorage.getItem('hitter');
+
+                const clickEventTrigger = function(e) {
+
                     /*Ajax Request Header setup*/
                     $.ajaxSetup({
                         headers: {
@@ -112,6 +115,16 @@
                         }
                     });
 
+                }
+
+                if( storageValue != null ) {
+                    document.getElementById("keyword").value = storageValue;
+                    localStorage.removeItem('hitter');
+                    clickEventTrigger();
+                }
+
+                $('#submit_request').click(function (e) {
+                    clickEventTrigger();
                 });
 
                 $(document).on("click", ".blog_status" , function() {
@@ -119,6 +132,7 @@
                     var value = $(this).children("input").val();
                     console.log(id);
                     console.log(value);
+                    window.location.href = `/blog/${value}`;
                 });
 
             });
