@@ -4,7 +4,8 @@
 namespace App\Http\Service\Crawler;
 
 
-use DOMDocument;
+use App\Http\Service\BlogService\BlogOperator;
+use App\Http\Service\BlogService\TagOperator;
 
 class MediumCrawler extends Crawler implements Crawlable {
 
@@ -26,14 +27,23 @@ class MediumCrawler extends Crawler implements Crawlable {
         return $this->fetchTitleAndLinkFromOverview();
     }
 
-    public function fetchBlogDetailFromLink($url) {
-        $this->data = $this->parseJsonUrl($url);
-        return [
+    /**
+     * @param $slug
+     * @return array
+     */
+    public function fetchBlogDetailFromLink($slug) {
+
+        $this->data = $this->parseJsonUrl(join('', [self::MEDIUM_ROOT_URL, $slug]));
+        $fetchedData = [
+            "title_slug" => $slug,
             "title" => $this->fetchTitle(),
             "creator" => $this->fetchCreator(),
 //            "detail" => $this->fetchDetail(),
-            "tags" => implode(', ', $this->fetchTags())
+            "tags" => $this->fetchTags()
         ];
+
+        BlogOperator::createBlog($slug, $fetchedData['title'], $fetchedData['creator'], "dummy data", $fetchedData['tags']);
+        return $fetchedData;
     }
 
     /**
@@ -45,11 +55,11 @@ class MediumCrawler extends Crawler implements Crawlable {
             $this->data,
             $out, PREG_PATTERN_ORDER);
 
-        $prefixed_array = preg_filter('/^/', self::MEDIUM_ROOT_URL, $out[2]);
+//        $prefixed_array = preg_filter('/^/', self::MEDIUM_ROOT_URL, $out[2]);
 
         $returnArray = [
             "title" => $out[1],
-            "url" => $prefixed_array
+            "url" => $out[2]
         ];
         return $returnArray;
     }
