@@ -4,10 +4,8 @@
 namespace App\Http\Service\Crawler;
 
 
-
-
-
 use App\Http\Transactor\BlogTransactor;
+
 
 class MediumCrawler extends Crawler implements Crawlable {
 
@@ -25,7 +23,7 @@ class MediumCrawler extends Crawler implements Crawlable {
      * @return array
      */
     public function fetchBlogsFromTagOverview($tag, int $count = 1) {
-        $curlResponse = $this->parseJsonUrl(sprintf(self::LOAD_MORE_URL, $tag, $count*10));
+        $curlResponse = $this->parseUrl(sprintf(self::LOAD_MORE_URL, $tag, $count*10), self::REQUEST_TYPE_JSON);
         $this->data = $curlResponse['file'];
         $returnArray = $this->fetchTitleAndLinkFromOverview();
         $returnArray['curl_time'] = $curlResponse['meta']['total_time'];
@@ -38,7 +36,7 @@ class MediumCrawler extends Crawler implements Crawlable {
      */
     public function fetchBlogDetailFromLink($slug) {
 
-        $curlResponse = $this->parseJsonUrl(join('', [self::MEDIUM_ROOT_URL, $slug]));
+        $curlResponse = $this->parseUrl(join('', [self::MEDIUM_ROOT_URL, $slug]), self::REQUEST_TYPE_JSON);
         $this->data = $curlResponse['file'];
         $this->fetchDetail();
         $fetchedData = [
