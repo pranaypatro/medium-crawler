@@ -41,7 +41,6 @@ class ParseController extends Controller
         } else {
             $fetchedData = $this->mediumCrawler->fetchBlogDetailFromLink($slug);
             $fetchedData['fetched_from'] = "Crawler";
-//            dd($fetchedData);
         }
         return view('blog-detail')->with('data', $fetchedData);
     }

@@ -96,6 +96,12 @@
                     <label>Creator:- </label>
                     <label>{{ $data['creator'] }}</label>
                 </div>
+{{--                <div class="element">--}}
+{{--                    <label>Detail Paragraphs:- </label>--}}
+{{--                    @foreach ($data['data'] as $para)--}}
+{{--                        <p>{{ $data['data'] }}</p>--}}
+{{--                    @endforeach--}}
+{{--                </div>--}}
                 <div class="element">
                     <label>Tags:- </label>
                     @foreach ($data['tags'] as $tag)

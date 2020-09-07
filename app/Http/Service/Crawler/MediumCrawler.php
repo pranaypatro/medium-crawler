@@ -37,16 +37,18 @@ class MediumCrawler extends Crawler implements Crawlable {
 
         $curlResponse = $this->parseJsonUrl(join('', [self::MEDIUM_ROOT_URL, $slug]));
         $this->data = $curlResponse['file'];
+        $this->fetchDetail();
         $fetchedData = [
             "title_slug" => $slug,
             "title" => $this->fetchTitle(),
             "creator" => $this->fetchCreator(),
-//            "detail" => $this->fetchDetail(),
+            "data" => $this->fetchDetail(),
             "tags" => $this->fetchTags(),
             "curl_time" => $curlResponse['meta']['total_time']
         ];
 
-        BlogOperator::createBlog($slug, $fetchedData['title'], $fetchedData['creator'], "dummy data", $fetchedData['tags']);
+        BlogOperator::createBlog($slug, $fetchedData['title'], $fetchedData['creator'], json_encode($fetchedData['data']),
+            $fetchedData['tags']);
         return $fetchedData;
     }
 
@@ -112,11 +114,16 @@ class MediumCrawler extends Crawler implements Crawlable {
     }
 
     private function fetchDetail() {
-        preg_match('|<div><a class="cl cm at au av aw ax ay az ba he bd ei ej" rel="noopener" href="(.*)">(.*)</a> <!-- -->·<!-- --> <!-- -->(.*)<!-- -->(.*)</div>|U',
+//        preg_match('|<div><a class="cl cm at au av aw ax ay az ba he bd ei ej" rel="noopener" href="(.*)">(.*)</a> <!-- -->·<!-- --> <!-- -->(.*)<!-- -->(.*)</div>|U',
+//            $this->data,
+//            $out
+//        );
+
+        preg_match_all('|{"name":".*","type":[0-9]*,"text":"(.*)","markups"|U',
             $this->data,
             $out
         );
-        return $out[2] . ', ' . $out[3] . $out[4];
+        return $out[1];
     }
 
     public function fetchResponses() {
