@@ -2,46 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Blog;
-use App\Http\BlogQuery;
-use App\Http\Service\Crawler\MediumCrawler;
+use App\Http\Service\BlogService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 
 class ParseController extends Controller
 {
 
-    private $data;
-    private MediumCrawler $mediumCrawler;
-    const OVERVIEW_PAGE = "https://medium.com/hackernoon/tagged/%s";
-//    const BASE_URL = "https://medium.com/hackernoon/load-more?sortBy=tagged&tagSlug=%s";
-//    const MAIN_BLOG_URL = "https://medium.com/hackernoon/load-more?sortBy=tagged&tagSlug=%s";
+    private BlogService $blogService;
 
 
     /**
      * ParseController constructor.
      */
     public function __construct() {
-        $this->mediumCrawler = new MediumCrawler();
+        $this->blogService = new BlogService();
     }
 
+    /**
+     * Delegates the request of fetching title to the BlogService
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function parseMediumOverview(Request $request) {
-        $this->data = $this->mediumCrawler->fetchBlogsFromTagOverview($request->input('keyword'), $request->input('next'));
-        $this->data['next'] = $request->input('next')+1;
-        return response()->json(json_encode($this->data));
+        $data = $this->blogService->getTitles($request->input('keyword'), $request->input('next'));
+        return response()->json(json_encode($data));
     }
 
-    public function parseBlog(string $slug, Request $request) {
-//        $slug = "chatbots-to-the-rescue-boring-forms-beware-1867d0498c0c";
-        $fetchedData = null;
-        if( Blog::where('title_slug', '=', $slug)->exists() ) {
-            $fetchedData = BlogQuery::getBlog($slug);
-            $fetchedData['fetched_from'] = "Database";
-            $fetchedData['curl_time'] = "0";
-        } else {
-            $fetchedData = $this->mediumCrawler->fetchBlogDetailFromLink($slug);
-            $fetchedData['fetched_from'] = "Crawler";
-        }
+    /**
+     * Delegates the retrieval of blog data to BlogService which inturn decides whether to fetch blog data from
+     * crawler or database.
+     * @param string $slug
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function parseBlog(string $slug) {
+        $fetchedData = $this->blogService->getBlog($slug);
         return view('blog-detail')->with('data', $fetchedData);
     }
 
