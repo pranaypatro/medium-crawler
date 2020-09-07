@@ -5,7 +5,6 @@ namespace App\Http\Service\Crawler;
 
 
 use App\Http\Service\BlogService\BlogOperator;
-use App\Http\Service\BlogService\TagOperator;
 
 class MediumCrawler extends Crawler implements Crawlable {
 
@@ -22,9 +21,12 @@ class MediumCrawler extends Crawler implements Crawlable {
      * @param int $count
      * @return array
      */
-    public function fetchBlogsFromTagOverview($tag, int $count = 10) {
-        $this->data = $this->parseJsonUrl(sprintf(self::LOAD_MORE_URL, $tag, $count));
-        return $this->fetchTitleAndLinkFromOverview();
+    public function fetchBlogsFromTagOverview($tag, int $count = 1) {
+        $curlResponse = $this->parseJsonUrl(sprintf(self::LOAD_MORE_URL, $tag, $count*10));
+        $this->data = $curlResponse['file'];
+        $returnArray = $this->fetchTitleAndLinkFromOverview();
+        $returnArray['curl_time'] = $curlResponse['meta']['total_time'];
+        return $returnArray;
     }
 
     /**
@@ -33,13 +35,15 @@ class MediumCrawler extends Crawler implements Crawlable {
      */
     public function fetchBlogDetailFromLink($slug) {
 
-        $this->data = $this->parseJsonUrl(join('', [self::MEDIUM_ROOT_URL, $slug]));
+        $curlResponse = $this->parseJsonUrl(join('', [self::MEDIUM_ROOT_URL, $slug]));
+        $this->data = $curlResponse['file'];
         $fetchedData = [
             "title_slug" => $slug,
             "title" => $this->fetchTitle(),
             "creator" => $this->fetchCreator(),
 //            "detail" => $this->fetchDetail(),
-            "tags" => $this->fetchTags()
+            "tags" => $this->fetchTags(),
+            "curl_time" => $curlResponse['meta']['total_time']
         ];
 
         BlogOperator::createBlog($slug, $fetchedData['title'], $fetchedData['creator'], "dummy data", $fetchedData['tags']);
@@ -56,11 +60,15 @@ class MediumCrawler extends Crawler implements Crawlable {
             $out, PREG_PATTERN_ORDER);
 
 //        $prefixed_array = preg_filter('/^/', self::MEDIUM_ROOT_URL, $out[2]);
-
+        if( sizeof($out[1] ) >= 10 ) {
+            $out[1] = array_slice($out[1], -10);
+            $out[2] = array_slice($out[2], -10);
+        }
         $returnArray = [
             "title" => $out[1],
             "url" => $out[2]
         ];
+//        dd($returnArray);
         return $returnArray;
     }
 

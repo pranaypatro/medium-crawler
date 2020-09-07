@@ -27,10 +27,14 @@ class Crawler {
 
         $file = curl_exec($ch);
 
+        $info = curl_getinfo($ch);
         curl_close($ch);
 
         file_put_contents('crawl_output.txt', $file);
-        return $file;
+
+        $returnData['file'] = $file;
+        $returnData['meta'] = $info;
+        return $returnData;
     }
 
     public static function parseRawUrl($url) {
@@ -51,11 +55,13 @@ class Crawler {
         curl_setopt($ch, CURLOPT_HTTPHEADER, $customHeaders);
 
         $file = curl_exec($ch);
-
+        $info = curl_getinfo($ch);
         curl_close($ch);
-
         file_put_contents('crawl_output.txt', $file);
-        return $file;
+
+        $returnData['file'] = $file;
+        $returnData['meta'] = $info;
+        return $returnData;
     }
 
 }

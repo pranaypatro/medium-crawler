@@ -66,19 +66,20 @@
     <body>
         <div class="flex-center position-ref full-height">
             <div class="content">
-                <div class="content">
-                    <form id="submit_request" method="post" action="#">
-                        <label>Enter Keyword</label>
-                        <input type="text" id="keyword" name="keyword">
-                        <button type="submit">Search</button>
-                    </form>
+                <label id="crawl-time">Crawl Time</label>
+                <form id="submit_request" method="post" action="#">
+                    <label>Enter Keyword</label>
+                    <input type="text" id="keyword" name="keyword">
+                    <input hidden type="text" id="next" name="next" value="1">
+                    <button id="submit_button" type="submit">Search</button>
+                </form>
 
-                    <div id="blogs-overview">
+                <div id="blogs-overview">
 
-                    </div>
                 </div>
-
             </div>
+
+
         </div>
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
@@ -88,7 +89,9 @@
                 var storageValue = localStorage.getItem('hitter');
 
                 const clickEventTrigger = function(e) {
-
+                    if(e !== undefined) {
+                        e.preventDefault();
+                    }
                     /*Ajax Request Header setup*/
                     $.ajaxSetup({
                         headers: {
@@ -102,19 +105,24 @@
                         method: 'post',
                         data: $('#submit_request').serialize(),
                         success: function(response) {
-
                             var jsonData = JSON.parse(response);
-
                             var element = document.getElementById("blogs-overview");
                             element.innerHTML = "";
                             var i=0;
                             for (i = 0; i < (jsonData.title).length; i++) {
-                                // console.log(jsonData.title[i] + " - " +  jsonData.url[i]);
                                 element.innerHTML += `<div class="blog_status"><label>${jsonData.title[i]}</label><input type="hidden" id="${i}" value="${jsonData.url[i]}" name="blog_url"></div>`;
                             }
-                        }
-                    });
+                            document.getElementById('next').value = jsonData.next;
+                            document.getElementById('crawl-time').value = jsonData.curl_time;
+                            alert(jsonData.curl_time);
 
+                            element.innerHTML += `<a id="next-button">Next</a>`;
+                        },
+                        error: function(xhr){
+                            alert("An error occured: " + xhr.status + " " + xhr.statusText);
+                        }
+
+                    });
                 }
 
                 if( storageValue != null ) {
@@ -123,8 +131,8 @@
                     clickEventTrigger();
                 }
 
-                $('#submit_request').click(function (e) {
-                    clickEventTrigger();
+                $('#submit_button').click(function (e) {
+                    clickEventTrigger(e);
                 });
 
                 $(document).on("click", ".blog_status" , function() {
@@ -134,6 +142,18 @@
                     console.log(value);
                     window.location.href = `/blog/${value}`;
                 });
+
+
+                // $('#next-button').click(function (e) {
+                //     alert("next button clicked");
+                //     e.preventDefault();
+                //     clickEventTrigger(e);
+                // });
+
+                $(document).on("click", "#next-button" , function(e) {
+                    clickEventTrigger(e);
+                });
+
 
             });
         </script>

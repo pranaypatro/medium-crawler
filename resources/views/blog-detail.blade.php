@@ -81,6 +81,10 @@
             <div class="links">
 
                 <div class="element">
+                    <label>Data fetched Time:- </label>
+                    <label>{{ $data['curl_time'] }}</label>
+                </div>
+                <div class="element">
                     <label>Data fetched from:- </label>
                     <label>{{ $data['fetched_from'] }}</label>
                 </div>
