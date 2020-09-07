@@ -1,15 +1,13 @@
 <?php
 
 
-namespace App\Http\Service\BlogService;
+namespace App\Http\Transactor;
 
 
 use App\Blog;
-use App\BlogTagMapping;
-use App\Http\Service\BlogTagOperator;
 use Illuminate\Support\Facades\DB;
 
-class BlogOperator {
+class BlogTransactor {
     public static function createBlog(string $titleSlug, $title, $creator, $data, $tags) {
         try {
             DB::transaction(function () use ($tags, $titleSlug, $title, $creator, $data) {
@@ -21,8 +19,8 @@ class BlogOperator {
                     $blog->data = $data;
                     $blog->save();
                 }
-                $tagIds = TagOperator::createTag($tags);
-                BlogTagOperator::createMappingEntry($blog->id, $tagIds);
+                $tagIds = TagTransactor::createTag($tags);
+                BlogTagTransactor::createMappingEntry($blog->id, $tagIds);
             });
         } catch(\Exception $ex) {
             dd("Exception Occurred : " . $ex->getMessage() );

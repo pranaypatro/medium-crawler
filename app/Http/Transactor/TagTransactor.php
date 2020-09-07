@@ -1,14 +1,14 @@
 <?php
 
 
-namespace App\Http\Service\BlogService;
+namespace App\Http\Transactor;
 
 
-use App\Http\Helpers\Constants;
+
 use App\Tag;
 use Illuminate\Support\Facades\DB;
 
-class TagOperator {
+class TagTransactor {
 
     public static function createTag(array $tags) {
         $idArray = array();

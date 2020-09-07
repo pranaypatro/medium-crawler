@@ -1,12 +1,11 @@
 <?php
 
 
-namespace App\Http;
+namespace App\Http\Query;
 
 
 use App\Blog;
 use App\BlogTagMapping;
-use App\Tag;
 
 class BlogQuery {
 
@@ -20,8 +19,6 @@ class BlogQuery {
                 ->join('tags', 'blog_tag_mapping.tag_id', '=', 'tags.id')
                 ->get()->pluck('tag_name')->toArray();
         $blog['tags'] = $tagData;
-
-
         return $blog;
     }
 

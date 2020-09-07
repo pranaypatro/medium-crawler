@@ -1,13 +1,13 @@
 <?php
 
 
-namespace App\Http\Service;
+namespace App\Http\Transactor;
 
 
 use App\BlogTagMapping;
 use Illuminate\Support\Facades\DB;
 
-class BlogTagOperator {
+class BlogTagTransactor {
 
     public static function createMappingEntry(int $blogId, $tagIds) {
         try {

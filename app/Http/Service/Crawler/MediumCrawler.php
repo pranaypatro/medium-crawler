@@ -4,7 +4,10 @@
 namespace App\Http\Service\Crawler;
 
 
-use App\Http\Service\BlogService\BlogOperator;
+
+
+
+use App\Http\Transactor\BlogTransactor;
 
 class MediumCrawler extends Crawler implements Crawlable {
 
@@ -47,7 +50,7 @@ class MediumCrawler extends Crawler implements Crawlable {
             "curl_time" => $curlResponse['meta']['total_time']
         ];
 
-        BlogOperator::createBlog($slug, $fetchedData['title'], $fetchedData['creator'], json_encode($fetchedData['data']),
+        BlogTransactor::createBlog($slug, $fetchedData['title'], $fetchedData['creator'], json_encode($fetchedData['data']),
             $fetchedData['tags']);
         return $fetchedData;
     }
