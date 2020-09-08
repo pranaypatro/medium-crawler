@@ -7,13 +7,10 @@ namespace App\Http\Service\Crawler;
 use App\Http\Transactor\BlogTransactor;
 
 
-class MediumCrawler extends Crawler implements Crawlable {
+class MediumCrawler extends Crawler implements Crawlable, MediumCrawlerPattern {
 
-    const MEDIUM_ROOT_URL = "https://medium.com/hackernoon/";
-    const LOAD_MORE_URL = self::MEDIUM_ROOT_URL . "load-more?sortBy=tagged&tagSlug=%s&limit=%s";
+
     protected $data = "";
-
-    public function __construct() {}
 
     /**
      * This function will be the Single Point which will call other stub methods for fetching parameters by using Regex.
@@ -31,38 +28,50 @@ class MediumCrawler extends Crawler implements Crawlable {
     }
 
     /**
+     * This method delegates the parsing of url and and returns all the matched pattern with the crawled website data.
+     * Also returns meta info about the cURL request like total_time for crawling!
+     * After extracting data it calls BlogTransactor to store the crawled Information into the database for faster
+     * retrieval of data next time.
      * @param $slug
      * @return array
      */
     public function fetchBlogDetailFromLink($slug) {
 
+        // Crawls The url and fetches the data of webpage
         $curlResponse = $this->parseUrl(join('', [self::MEDIUM_ROOT_URL, $slug]), self::REQUEST_TYPE_JSON);
+
+
         $this->data = $curlResponse['file'];
-        $this->fetchDetail();
+
+        // Matching pattern with the crawled data to extract business data.
         $fetchedData = [
             "title_slug" => $slug,
-            "title" => $this->fetchTitle(),
-            "creator" => $this->fetchCreator(),
-            "data" => $this->fetchDetail(),
-            "tags" => $this->fetchTags(),
+            "title" => $this->dataExtractor(self::DETAIL_TITLE)[0],
+            "creator" => $this->dataExtractor(self::DETAIL_CREATOR)[0],
+            "data" => $this->dataExtractor(self::DETAIL_DATA)[0],
+            "tags" => $this->dataExtractor(self::DETAIL_TAG),
             "curl_time" => $curlResponse['meta']['total_time']
         ];
 
-        BlogTransactor::createBlog($slug, $fetchedData['title'], $fetchedData['creator'], json_encode($fetchedData['data']),
+        // Saves the Blog Information into database for faster retrieval of data next time.
+        BlogTransactor::createBlog($slug, $fetchedData['title'], $fetchedData['creator'], $fetchedData['data'],
             $fetchedData['tags']);
+
+        // returning result.
         return $fetchedData;
     }
 
     /**
-     * Extracts The Title and Link from the crawled Data of Overview Page.
+     * Extracts The Title and slug from the crawled Data of Overview Page.
+     * and returns the last 10 title and slug if count is more than 9.
+     * else returns all the element as it is already less than 10.
      * @return array
      */
     private function fetchTitleAndLinkFromOverview() {
-        preg_match_all('|{"id":".*","versionId":".*","creatorId":".*","homeCollectionId":".*","title":"(.*)","detectedLanguage":".*","latestVersion":".*","latestPublishedVersion":".*","hasUnpublishedEdits.*"uniqueSlug":"(.*),"|U',
+        preg_match_all(self::TITLE_LINK_OVERVIEW,
             $this->data,
             $out, PREG_PATTERN_ORDER);
 
-//        $prefixed_array = preg_filter('/^/', self::MEDIUM_ROOT_URL, $out[2]);
         if( sizeof($out[1] ) >= 10 ) {
             $out[1] = array_slice($out[1], -10);
             $out[2] = array_slice($out[2], -10);
@@ -71,78 +80,22 @@ class MediumCrawler extends Crawler implements Crawlable {
             "title" => $out[1],
             "url" => $out[2]
         ];
-//        dd($returnArray);
         return $returnArray;
     }
 
-    private function fetchTitle() {
-//        preg_match('|class="fo fp fq fr b fs ft fu fv fw fx fy fz ga gb gc gd ge gf gg gh ec">(.*)</h1>|U',
-//            $this->data,
-//            $out
-//        );
-
-        preg_match('|{"success":[a-zA-Z]*,"payload":{"value":{"id":".*","versionId":".*","creatorId":".*","homeCollectionId":"[a-zA-Z0-9]*","title":"(.*)","detectedLanguage":"en"|U',
+    /**
+     * Takes a patterns and match the class variable $data's data for the given pattern.
+     * and returns the output[1] (as output[1] contains the extracted string group.)
+     * @param string $pattern
+     * @return mixed
+     */
+    private function dataExtractor(string $pattern) {
+        preg_match_all($pattern,
             $this->data,
             $out
         );
-        return ($out[1]);
-    }
 
-    private function fetchTags() {
-//        preg_match_all('|<a href="(.*)" class="ce cf cg kk hv sw sx hu r sy">(.*)</a>|U',
-//            $this->data,
-//            $out
-//        );
-
-        preg_match_all('|{"slug":"[A-Za-z0-9]*","name":"([A-Za-z0-9]*)","postCount":[0-9]*,"metadata":{"postCount":[0-9]*,"coverImage":.*},"type":"Tag"}|mU',
-            $this->data,
-            $out
-        );
-        return ($out[1]);
-    }
-
-    private function fetchCreator() {
-//        preg_match('|<a class="cl cm at au av aw ax ay az ba he bd ei ej" rel="noopener" href="(.*)">(.*)</a>|U',
-//            $this->data,
-//            $out
-//        );
-
-        preg_match('|"User":.*"name":"(.*)","username"|U',
-            $this->data,
-            $out
-        );
-        return ($out[1]);
-    }
-
-    private function fetchDetail() {
-//        preg_match('|<div><a class="cl cm at au av aw ax ay az ba he bd ei ej" rel="noopener" href="(.*)">(.*)</a> <!-- -->·<!-- --> <!-- -->(.*)<!-- -->(.*)</div>|U',
-//            $this->data,
-//            $out
-//        );
-
-        preg_match_all('|{"name":".*","type":[0-9]*,"text":"(.*)","markups"|U',
-            $this->data,
-            $out
-        );
         return $out[1];
     }
 
-    public function fetchResponses() {
-        preg_match('|class="fo fp fq fr b fs ft fu fv fw fx fy fz ga gb gc gd ge gf gg gh ec">(.*)</h1>|U',
-            $this->data,
-            $out
-        );
-        dump($out);
-    }
-
 }
-
-
-/**
- *
- * //        preg_match_all('|<h3.*class=".*graf--title">(.*)<\/h3><p.*class=".*">.*<\/p><\/div><\/div><\/section><\/div><\/a><\/div><div class="postArticle-readMore"><a class=".*"   href="(.*)" data-action=.*>Read more…<\/a>|U',
-//            $this->data,
-//            $out, PREG_PATTERN_ORDER);
-//        dump($out[1]);
-//        dump($out[2]);
- */
