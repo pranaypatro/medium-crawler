@@ -33,6 +33,7 @@ class BlogService {
         if( Blog::where('title_slug', '=', $slug)->exists() ) {
             $fetchedData = BlogQuery::getBlog($slug);
             $fetchedData['fetched_from'] = "Database";
+            $fetchedData['data'] = json_decode($fetchedData['data']);
             $fetchedData['curl_time'] = "0";
         } else {
             $fetchedData = $this->mediumCrawler->fetchBlogDetailFromLink($slug);

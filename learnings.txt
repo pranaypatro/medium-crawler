@@ -1,11 +1,12 @@
 1. Learnt Scrapping
 2. Was performing dynamic update of data on ajax side first time.
-3. Got to know about CYRL option for Accept param
+3. Got to know about CURL option for Accept param
     -> when i set the Accept to application/json i got the json response which was less heavy than the html response
        due to which the parsing time was reduced and bandwidth was saved.
-4. Refreshed knowledge of Regex.
-5. Got to learn about "Runaway Regular Expressions: Catastrophic Backtracking"
+4. Refreshed knowledge of Regex Pattern wirting.
+5. Got to learn about "Runaway Regular Expressions: Catastrophic Backtracking" https://www.regular-expressions.info/catastrophic.html
 6. Was stuck in an error while parsing the tags it was selecting whole. i forgot about the Ungreedy option.
 7. The DOM load problem for dynamic DOM element when accessed by Jquery.
-8. Discovered human.txt on medium.com
+8. Discovered human.txt on medium.com // https://medium.com/humans.txt
 9. Discovered Jobs Portal on the the console of medium.com
+10. Got to know about Unix Time stamp https://www.unixtimestamp.com , https://www.epochconverter.com
