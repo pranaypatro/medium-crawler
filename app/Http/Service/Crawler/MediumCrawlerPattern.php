@@ -42,6 +42,6 @@ interface MediumCrawlerPattern {
 
     const DETAIL_RESPONSE_HTML = '|class="fo fp fq fr b fs ft fu fv fw fx fy fz ga gb gc gd ge gf gg gh ec">(.*)</h1>|U';
 
-
+    const DETAIL_READ_TIME = '|"wordCount":[0-9]*,"imageCount":[0-9]*,"readingTime":(.*),"subtitle":|U';
 
 }

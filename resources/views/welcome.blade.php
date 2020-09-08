@@ -114,12 +114,11 @@
                             }
                             document.getElementById('next').value = jsonData.next;
                             document.getElementById('crawl-time').value = jsonData.curl_time;
-                            alert(jsonData.curl_time);
 
                             element.innerHTML += `<a id="next-button">Next</a>`;
                         },
                         error: function(xhr){
-                            alert("An error occured: " + xhr.status + " " + xhr.statusText);
+                            console.log("An error occured: " + xhr.status + " " + xhr.statusText);
                         }
 
                     });

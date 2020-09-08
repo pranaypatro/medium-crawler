@@ -15,7 +15,7 @@ class BlogQuery {
      * @return mixed
      */
     public static function getBlog($slug) {
-        $blogDetails = Blog::select('id', 'title_slug', 'title', 'data', 'creator')
+        $blogDetails = Blog::select('id', 'title_slug', 'title', 'data', 'creator', 'read_time')
                 ->where('title_slug', '=', $slug)
                 ->get()
                 ->toArray()[0];

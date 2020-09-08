@@ -7,7 +7,7 @@ namespace App\Http\Service\Crawler;
 use App\Http\Transactor\BlogTransactor;
 
 
-class MediumCrawler extends Crawler implements Crawlable, MediumCrawlerPattern {
+class MediumCrawler extends Crawler implements MediumCrawlerPattern {
 
 
     protected $data = "";
@@ -48,6 +48,7 @@ class MediumCrawler extends Crawler implements Crawlable, MediumCrawlerPattern {
             "title_slug" => $slug,
             "title" => $this->dataExtractor(self::DETAIL_TITLE)[0],
             "creator" => $this->dataExtractor(self::DETAIL_CREATOR)[0],
+            "read_time" => $this->dataExtractor(self::DETAIL_READ_TIME)[0],
             "data" => json_encode($this->dataExtractor(self::DETAIL_DATA)),
             "tags" => $this->dataExtractor(self::DETAIL_TAG),
             "curl_time" => $curlResponse['meta']['total_time']
@@ -55,7 +56,7 @@ class MediumCrawler extends Crawler implements Crawlable, MediumCrawlerPattern {
 
         // Saves the Blog Information into database for faster retrieval of data next time.
         BlogTransactor::createBlog($slug, $fetchedData['title'], $fetchedData['creator'], $fetchedData['data'],
-            $fetchedData['tags']);
+            $fetchedData['tags'], $fetchedData['read_time']);
 
         // returning result.
         return $fetchedData;

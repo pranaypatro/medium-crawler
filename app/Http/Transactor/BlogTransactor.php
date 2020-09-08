@@ -17,16 +17,18 @@ class BlogTransactor {
      * @param $creator
      * @param $data
      * @param $tags
+     * @param $readTime
      */
-    public static function createBlog(string $titleSlug, $title, $creator, $data, $tags) {
+    public static function createBlog(string $titleSlug, $title, $creator, $data, $tags, $readTime) {
         try {
-            DB::transaction(function () use ($tags, $titleSlug, $title, $creator, $data) {
+            DB::transaction(function () use ($readTime, $tags, $titleSlug, $title, $creator, $data) {
 
                 $blog = new Blog;
                 if( !Blog::where('title_slug', '=', $titleSlug)->exists() ) {
                     $blog->title_slug = $titleSlug;
                     $blog->title = $title;
                     $blog->creator = $creator;
+                    $blog->read_time = $readTime;
                     $blog->data = json_encode($data);
                     $blog->save();
                 }

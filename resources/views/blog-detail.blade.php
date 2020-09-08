@@ -11,6 +11,10 @@
 
         <!-- Styles -->
         <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
             html, body {
                 background-color: #fff;
                 color: #636b6f;
@@ -81,7 +85,7 @@
             <div class="links">
 {{--                {{ dd($data) }}--}}
                 <div class="element">
-                    <label>Detail Paragraphs:- </label>
+                    <label><b>Detail Paragraphs:-</b> </label>
                     @foreach ($data['data'] as $para)
                         <p>{{ $para }}</p>
                     @endforeach
@@ -103,6 +107,10 @@
                     <label>{{ $data['creator'] }}</label>
                 </div>
                 <div class="element">
+                    <label><b>Read Time:- </b></label>
+                    <label>{{ round($data['read_time'], 0, PHP_ROUND_HALF_UP) }} min read</label>
+                </div>
+                <div class="element">
                     <label><b>Tags:- </b></label>
                     @foreach ($data['tags'] as $tag)
                         <a class="tag-element" href="">{{ $tag }}</a>
@@ -120,7 +128,6 @@
                     e.preventDefault();
                     var text = $(this).text();
                     localStorage.setItem('hitter', text.trim());
-                    alert(text.trim());
                     window.location.href = "{{ route('home') }}";
                 });
 
