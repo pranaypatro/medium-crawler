@@ -18,10 +18,11 @@ class BlogTransactor {
      * @param $data
      * @param $tags
      * @param $readTime
+     * @param $publishedAt
      */
-    public static function createBlog(string $titleSlug, $title, $creator, $data, $tags, $readTime) {
+    public static function createBlog(string $titleSlug, $title, $creator, $data, $tags, $readTime, $publishedAt) {
         try {
-            DB::transaction(function () use ($readTime, $tags, $titleSlug, $title, $creator, $data) {
+            DB::transaction(function () use ($publishedAt, $readTime, $tags, $titleSlug, $title, $creator, $data) {
 
                 $blog = new Blog;
                 if( !Blog::where('title_slug', '=', $titleSlug)->exists() ) {
@@ -29,6 +30,7 @@ class BlogTransactor {
                     $blog->title = $title;
                     $blog->creator = $creator;
                     $blog->read_time = $readTime;
+                    $blog->published_at = $publishedAt;
                     $blog->data = json_encode($data);
                     $blog->save();
                 }
@@ -36,7 +38,7 @@ class BlogTransactor {
                 BlogTagTransactor::createMappingEntry($blog->id, $tagIds);
             });
         } catch(\Exception $ex) {
-            dd("Exception Occurred in BlogTransactor : " . $ex->getTraceAsString() );
+            dd("Exception Occurred in BlogTransactor : " . $ex->getMessage() );
         }
     }
 }

@@ -9,3 +9,4 @@
 7. The DOM load problem for dynamic DOM element when accessed by Jquery.
 8. Discovered human.txt on medium.com // https://medium.com/humans.txt
 9. Discovered Jobs Portal on the the console of medium.com
+10. Got to know about Unix Time stamp https://www.unixtimestamp.com , https://www.epochconverter.com

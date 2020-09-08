@@ -49,6 +49,7 @@ class MediumCrawler extends Crawler implements MediumCrawlerPattern {
             "title" => $this->dataExtractor(self::DETAIL_TITLE)[0],
             "creator" => $this->dataExtractor(self::DETAIL_CREATOR)[0],
             "read_time" => $this->dataExtractor(self::DETAIL_READ_TIME)[0],
+            "published_at" => $this->dataExtractor(self::DETAIL_PUBLISHED_AT)[0],
             "data" => json_encode($this->dataExtractor(self::DETAIL_DATA)),
             "tags" => $this->dataExtractor(self::DETAIL_TAG),
             "curl_time" => $curlResponse['meta']['total_time']
@@ -56,7 +57,7 @@ class MediumCrawler extends Crawler implements MediumCrawlerPattern {
 
         // Saves the Blog Information into database for faster retrieval of data next time.
         BlogTransactor::createBlog($slug, $fetchedData['title'], $fetchedData['creator'], $fetchedData['data'],
-            $fetchedData['tags'], $fetchedData['read_time']);
+            $fetchedData['tags'], $fetchedData['read_time'], $fetchedData['published_at']);
 
         // returning result.
         return $fetchedData;

@@ -44,4 +44,7 @@ interface MediumCrawlerPattern {
 
     const DETAIL_READ_TIME = '|"wordCount":[0-9]*,"imageCount":[0-9]*,"readingTime":(.*),"subtitle":|U';
 
+
+    const DETAIL_PUBLISHED_AT = '|"latestRev":[0-9]*,"createdAt":[0-9]*,"updatedAt":[0-9]*,"acceptedAt":[0-9]*,"firstPublishedAt":([0-9]*),"latestPublishedAt":[0-9]*,"vote":|U';
+
 }

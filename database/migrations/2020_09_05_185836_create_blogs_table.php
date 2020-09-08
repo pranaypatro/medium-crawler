@@ -19,6 +19,7 @@ class CreateBlogsTable extends Migration
             $table->string('title');
             $table->string('creator');
             $table->string('read_time');
+            $table->string('published_at');
             $table->longText('data');
             $table->timestamps();
         });
