@@ -48,7 +48,7 @@ class MediumCrawler extends Crawler implements Crawlable, MediumCrawlerPattern {
             "title_slug" => $slug,
             "title" => $this->dataExtractor(self::DETAIL_TITLE)[0],
             "creator" => $this->dataExtractor(self::DETAIL_CREATOR)[0],
-            "data" => $this->dataExtractor(self::DETAIL_DATA)[0],
+            "data" => $this->dataExtractor(self::DETAIL_DATA),
             "tags" => $this->dataExtractor(self::DETAIL_TAG),
             "curl_time" => $curlResponse['meta']['total_time']
         ];

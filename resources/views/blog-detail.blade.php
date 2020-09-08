@@ -79,31 +79,31 @@
                 </div>
             @endif
             <div class="links">
-
+{{--                {{ dd($data) }}--}}
                 <div class="element">
-                    <label>Data fetched Time:- </label>
+                    <label>Detail Paragraphs:- </label>
+                    @foreach ($data['data'] as $para)
+                        <p>{{ $para }}</p>
+                    @endforeach
+                </div>
+                <div class="element">
+                    <label><b>Data fetched Time:- </b></label>
                     <label>{{ $data['curl_time'] }}</label>
                 </div>
                 <div class="element">
-                    <label>Data fetched from:- </label>
+                    <label><b>Data fetched from:- </b></label>
                     <label>{{ $data['fetched_from'] }}</label>
                 </div>
                 <div class="element">
-                    <label>Title:- </label>
+                    <label><b>Title:- </b></label>
                     <label>{{ $data['title'] }}</label>
                 </div>
                 <div class="element">
-                    <label>Creator:- </label>
+                    <label><b>Creator:- </b></label>
                     <label>{{ $data['creator'] }}</label>
                 </div>
-{{--                <div class="element">--}}
-{{--                    <label>Detail Paragraphs:- </label>--}}
-{{--                    @foreach ($data['data'] as $para)--}}
-{{--                        <p>{{ $data['data'] }}</p>--}}
-{{--                    @endforeach--}}
-{{--                </div>--}}
                 <div class="element">
-                    <label>Tags:- </label>
+                    <label><b>Tags:- </b></label>
                     @foreach ($data['tags'] as $tag)
                         <a class="tag-element" href="">{{ $tag }}</a>
                     @endforeach

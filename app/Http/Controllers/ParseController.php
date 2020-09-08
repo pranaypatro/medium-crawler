@@ -38,6 +38,7 @@ class ParseController extends Controller
      */
     public function parseBlog(string $slug) {
         $fetchedData = $this->blogService->getBlog($slug);
+        $fetchedData['data'] = json_decode($fetchedData['data']);
         return view('blog-detail')->with('data', $fetchedData);
     }
 
