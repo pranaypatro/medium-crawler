@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\DB;
 
 class BlogTagTransactor {
 
+    /**
+     * Creates a mapping table entry for a blog with its affiliated Tags.
+     * @param int $blogId
+     * @param $tagIds
+     */
     public static function createMappingEntry(int $blogId, $tagIds) {
         try {
             DB::transaction(function () use ($blogId, $tagIds) {
@@ -20,7 +25,7 @@ class BlogTagTransactor {
                 }
             });
         } catch (\Exception $ex) {
-            dd("Exception Occured while inserting blog_tag_mapping entry : " . $ex->getMessage() );
+            dd("Exception Occurred while inserting blog_tag_mapping entry : " . $ex->getMessage() );
         }
     }
 }

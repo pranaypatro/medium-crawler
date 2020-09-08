@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\DB;
 
 class TagTransactor {
 
+    /**
+     * This method will create a new entry for a Tag if it doesnt exists and push all the ids of the tag which are
+     * passed to this method (including the newly created tag entry as well as the existing tag entry)
+     * This returned arary of tag ids will be used by the BlogTagTransactor to make the Mapping table entry in
+     * blog_tag_mapping table in database.
+     * @param array $tags
+     * @return array
+     */
     public static function createTag(array $tags) {
         $idArray = array();
         try {
