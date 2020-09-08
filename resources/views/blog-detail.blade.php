@@ -65,33 +65,67 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-            <div class="content">
-                <label id="crawl-time">Crawl Time</label>
-                <form id="submit_request" method="post" action="#">
-                    <label>Enter Keyword</label>
-                    <input type="text" id="keyword" name="keyword">
-                    <input hidden type="text" id="next" name="next" value="1">
-                    <button id="submit_button" type="submit">Search</button>
-                </form>
+            @if (Route::has('login'))
+                <div class="top-right links">
+                    @auth
+                        <a href="{{ url('/home') }}">Home</a>
+                    @else
+                        <a href="{{ route('login') }}">Login</a>
 
-                <div id="blogs-overview">
-
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}">Register</a>
+                        @endif
+                    @endauth
+                </div>
+            @endif
+            <div class="links">
+{{--                {{ dd($data) }}--}}
+                <div class="element">
+                    <label>Detail Paragraphs:- </label>
+                    @foreach ($data['data'] as $para)
+                        <p>{{ $para }}</p>
+                    @endforeach
+                </div>
+                <div class="element">
+                    <label><b>Data fetched Time:- </b></label>
+                    <label>{{ $data['curl_time'] }}</label>
+                </div>
+                <div class="element">
+                    <label><b>Data fetched from:- </b></label>
+                    <label>{{ $data['fetched_from'] }}</label>
+                </div>
+                <div class="element">
+                    <label><b>Title:- </b></label>
+                    <label>{{ $data['title'] }}</label>
+                </div>
+                <div class="element">
+                    <label><b>Creator:- </b></label>
+                    <label>{{ $data['creator'] }}</label>
+                </div>
+                <div class="element">
+                    <label><b>Tags:- </b></label>
+                    @foreach ($data['tags'] as $tag)
+                        <a class="tag-element" href="">{{ $tag }}</a>
+                    @endforeach
                 </div>
             </div>
-
-
         </div>
+
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
         <script>
             $(document).ready(function() {
 
-                var storageValue = localStorage.getItem('hitter');
+                $('.tag-element').click(function(e) {
+                    e.preventDefault();
+                    var text = $(this).text();
+                    localStorage.setItem('hitter', text.trim());
+                    alert(text.trim());
+                    window.location.href = "{{ route('home') }}";
+                });
 
-                const clickEventTrigger = function(e) {
-                    if(e !== undefined) {
-                        e.preventDefault();
-                    }
+                $('#submit_request').click(function(e) {
+                    e.preventDefault();
                     /*Ajax Request Header setup*/
                     $.ajaxSetup({
                         headers: {
@@ -101,38 +135,23 @@
 
                     /* Submit form data using ajax*/
                     $.ajax({
-                        url: "{{ route('overview.parse') }}",
-                        method: 'post',
+                        url: "{{ route('home') }}",
+                        method: 'get',
                         data: $('#submit_request').serialize(),
                         success: function(response) {
+
                             var jsonData = JSON.parse(response);
+
                             var element = document.getElementById("blogs-overview");
                             element.innerHTML = "";
                             var i=0;
                             for (i = 0; i < (jsonData.title).length; i++) {
+                                // console.log(jsonData.title[i] + " - " +  jsonData.url[i]);
                                 element.innerHTML += `<div class="blog_status"><label>${jsonData.title[i]}</label><input type="hidden" id="${i}" value="${jsonData.url[i]}" name="blog_url"></div>`;
                             }
-                            document.getElementById('next').value = jsonData.next;
-                            document.getElementById('crawl-time').value = jsonData.curl_time;
-                            alert(jsonData.curl_time);
-
-                            element.innerHTML += `<a id="next-button">Next</a>`;
-                        },
-                        error: function(xhr){
-                            alert("An error occured: " + xhr.status + " " + xhr.statusText);
                         }
-
                     });
-                }
 
-                if( storageValue != null ) {
-                    document.getElementById("keyword").value = storageValue;
-                    localStorage.removeItem('hitter');
-                    clickEventTrigger();
-                }
-
-                $('#submit_button').click(function (e) {
-                    clickEventTrigger(e);
                 });
 
                 $(document).on("click", ".blog_status" , function() {
@@ -140,20 +159,7 @@
                     var value = $(this).children("input").val();
                     console.log(id);
                     console.log(value);
-                    window.location.href = `/blog/${value}`;
                 });
-
-
-                // $('#next-button').click(function (e) {
-                //     alert("next button clicked");
-                //     e.preventDefault();
-                //     clickEventTrigger(e);
-                // });
-
-                $(document).on("click", "#next-button" , function(e) {
-                    clickEventTrigger(e);
-                });
-
 
             });
         </script>

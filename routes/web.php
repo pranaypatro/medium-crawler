@@ -13,4 +13,7 @@
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
+
+Route::post('/parse', 'ParseController@parseMediumOverview')->name('overview.parse');
+Route::get('/blog/{slug}', 'ParseController@parseBlog')->name('blog.parse');
