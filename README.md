@@ -20,6 +20,7 @@ Create a MySQL Database and use the credentials, database name in .env file
 
 ### Run Application
 
+`composer install`
 `php artisan serve`
 
 
